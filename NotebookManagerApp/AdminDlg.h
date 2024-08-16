@@ -117,4 +117,6 @@ public:
 	afx_msg void OnBnClickedButtonClear();
 	CEdit m_editOrigin;
 	CString m_strOrigin;
+	CEdit m_editCountRecord;
+	CString m_strCountRecord;
 };

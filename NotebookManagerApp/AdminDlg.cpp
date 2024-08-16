@@ -34,6 +34,7 @@ AdminDlg::AdminDlg(CWnd* pParent /*=nullptr*/)
 	, m_cdtDateOP(COleDateTime::GetCurrentTime())
 	, m_strSearch(_T(""))
 	, m_strOrigin(_T(""))
+	, m_strCountRecord(_T(""))
 {
 	m_colorBackground = RGB(242, 243, 245);
 	m_colorText = RGB(0, 0, 0);
@@ -73,6 +74,8 @@ void AdminDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_SEARCH, m_strSearch);
 	DDX_Control(pDX, IDC_EDIT_ORIGIN, m_editOrigin);
 	DDX_Text(pDX, IDC_EDIT_ORIGIN, m_strOrigin);
+	DDX_Control(pDX, IDC_EDIT_COUNT_RECORD, m_editCountRecord);
+	DDX_Text(pDX, IDC_EDIT_COUNT_RECORD, m_strCountRecord);
 }
 
 
@@ -323,7 +326,7 @@ void AdminDlg::OnClose()
 void AdminDlg::SetFontInit()
 {
 	font_data.pFontText.CreateFont(20, 0, 0, 0, FW_BOLD, FALSE, FALSE, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, _T("Times New Roman"));
-	font_data.pFontEdit.CreateFont(15, 0, 0, 0, FW_MEDIUM, FALSE, FALSE, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, _T("Arial"));
+	font_data.pFontEdit.CreateFont(18, 0, 0, 0, FW_MEDIUM, FALSE, FALSE, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, _T("Arial"));
 	font_data.pFontButton.CreateFont(28, 0, 0, 0, FW_SEMIBOLD, FALSE, FALSE, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, _T("Times New Roman"));
 	font_data.pFontList.CreateFont(17, 0, 0, 0, FW_MEDIUM, FALSE, FALSE, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, _T("Arial"));
 	font_data.pFontListFist.CreateFont(19, 0, 0, 0, FW_SEMIBOLD, FALSE, FALSE, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, _T("Times New Roman"));
@@ -352,6 +355,7 @@ void AdminDlg::SetFontInit()
 	GetDlgItem(IDC_EDIT_NOTE)->SetFont(&font_data.pFontEdit);
 	GetDlgItem(IDC_EDIT_SEARCH)->SetFont(&font_data.pFontEdit);
 	GetDlgItem(IDC_EDIT_ORIGIN)->SetFont(&font_data.pFontEdit);
+	GetDlgItem(IDC_EDIT_COUNT_RECORD)->SetFont(&font_data.pFontEdit);
 
 	GetDlgItem(IDC_LIST_DATA)->SetFont(&font_data.pFontList);
 }
@@ -364,6 +368,7 @@ void AdminDlg::SetDataInit()
 	m_strNote = "";
 	m_strSearch = "";
 	m_strOrigin = "";
+	m_strCountRecord = "";
 
 	CString strDateOfSupply  = COleDateTime::GetCurrentTime().Format(L"%Y-%m-%d");
 	m_cdtDateOS.ParseDateTime(strDateOfSupply, VAR_DATEVALUEONLY);
@@ -433,7 +438,10 @@ void AdminDlg::PopulateListCtrl()
 
 		mysql_free_result(res);
 		mysql_close(conn);
-		
+
+		m_strCountRecord.Format(_T("%d"), m_pListData.GetItemCount());
+		UpdateData(FALSE);
+
 		pListCtrl->Invalidate();
 		pListCtrl->UpdateWindow();
 	}
@@ -687,6 +695,8 @@ void AdminDlg::OnBnClickedButtonSearch()
 	else
 	{
 		SearchAndDisplayInListCtrl(m_strSearch);
+		m_strCountRecord.Format(_T("%d"), m_pListData.GetItemCount());
+		UpdateData(FALSE);
 	}
 }
 
@@ -706,6 +716,8 @@ void AdminDlg::OnEnChangeEditSearch()
 	else
 	{
 		SearchAndDisplayInListCtrl(m_strSearch);
+		m_strCountRecord.Format(_T("%d"), m_pListData.GetItemCount());
+		UpdateData(FALSE);
 	}
 }
 CString ToLower(const CString& str)
@@ -741,6 +753,7 @@ void AdminDlg::AddItemsToListCtrl(const std::vector<std::vector<CString>>& items
 		{
 			m_pListData.SetItemText(nItem, i, row[i]);
 		}
+		
 	}
 }
 void AdminDlg::SearchAndDisplayInListCtrl(const CString& searchText)
