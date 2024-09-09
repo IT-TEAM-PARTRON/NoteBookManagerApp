@@ -340,7 +340,7 @@ void CNotebookManagerAppDlg::OnBnClickedButtonLogin()
 						{
 							mysql_free_result(res); // Giải phóng bộ nhớ
 							mysql_close(conn); // Đóng kết nối
-							ShowWindow(SW_NORMAL);
+							SetWindowPos(NULL, -10000, -10000, 0, 0, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOSIZE);
 							AdminDlg dlgNew;
 							dlgNew.DoModal();
 							// Trả về để thoát khỏi hàm
